@@ -1,4 +1,3 @@
-streamlit_app.py
 import streamlit as st
 import time
 from streamlit_ace import st_ace
