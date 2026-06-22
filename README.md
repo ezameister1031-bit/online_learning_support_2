@@ -1,9 +1,9 @@
-# 🧠 Python学習支援AI（Ollama版）
+# 🧠 Python学習支援AI（gemini版）
 
 Streamlit を使用して作成した、
 初心者向けPython学習支援アプリです。
 
-コード入力と問題文をもとに、ローカルLLM（Ollama）を使用して
+コード入力と問題文をもとに、geminiAPIを使用して
 「答えを直接出さずにヒントだけを提示するAI学習支援」を行います。
 
 一定時間操作がない場合や、ヒントボタンを押した際にAIが動作し、
@@ -18,11 +18,10 @@ Streamlit を使用して作成した、
 
 ## 🌟 主な機能
 
-### 💡 AIヒント機能（Ollama連携）
+### 💡 AIヒント機能（gemini連携）
 - 問題文とコードを入力するとAIがヒントを生成
 - 正解コードは出さず、考え方のみ提示
-- ローカルLLM（Ollama）を使用した安全な学習支援
-- llama3などのモデルに対応
+- geminiAPIを使用した安全な学習支援
 
 ### ⌨️ コード入力型学習
 - 問題文とコードを同時に入力可能
@@ -36,15 +35,10 @@ Streamlit を使用して作成した、
 - 「改善の方向性」
 のみを提示し、答えは出さない設計
 
-### 🌐 ローカルLLM対応（Ollama）
-- OpenAI APIを使用せず完全ローカルで動作可能
-- インターネット不要のAI環境
+### 🌐 geminiAPI対応
+- 高品質の返答
 - プライバシーを考慮した学習支援
-
-### 🔗 ngrok連携
-- ローカルで動くOllamaを外部公開
-- Codespacesやクラウド環境からアクセス可能
-- 開発・実験用の簡易API構成
+- 無料枠のため使用制限に注意
 
 ---
 
@@ -52,38 +46,17 @@ Streamlit を使用して作成した、
 ### 1. 必要なライブラリのインストール
 Python環境がインストールされていることを確認し、必要なライブラリをインストールして下さい
 ```bash
-pip install streamlit requests streamlit-ace
+pip install streamlit requests streamlit-ace　google-generativeai
 ```
 #### 役割
 | ライブラリ         | 用途              |
 | ------------- | --------------- |
 | streamlit     | UI（画面全体）        |
-| requests      | OllamaへAPI通信    |
+| google-generativeai     | geminiの使用    |
 | streamlit-ace | コードエディタ（st_ace） |
 
-### 2. Ollamaのインストール
 
-以下からインストール：
-
-(https://ollama.com/)
-
-### 3. モデルの実行(ターミナルで実行)（1度だけでいい）
-
-```bash
-ollama run llama3
-```
-
-### 4. ngrokのインストール（外部アクセス用）
-以下からインストール：
-
-(https://ngrok.com/)
-### 5. ngrokの実行（ターミナルで実行・アプリ使用の際実行必須）
-
-```bash
-ngrok http 11434 --host-header="localhost:11434"
-```
-
-### 6. Streamlitアプリの起動
+### 2. Streamlitアプリの起動
 ```bash
 streamlit run streamlit_app.py
 ```
@@ -94,9 +67,7 @@ Streamlit（UI）
    ↓
 Pythonコード
    ↓
-ngrok（トンネル）
-   ↓
-Ollama（ローカルLLM）
+gemini
    ↓
 ヒント生成
 ```
@@ -105,9 +76,8 @@ Ollama（ローカルLLM）
 | ファイル名        | 内容　　           |
 | ------------- | --------------- |
 |streamlit_app.py|	メインUI|
-|ai_hint.py|	Ollamaとの通信処理|
+|ai_hint.py|	geminiとの通信処理|
 |requirements.txt|	依存ライブラリ|
-|ngrok	|外部公開用トンネル|
 
 ---
 
@@ -123,9 +93,7 @@ AIには以下の制約を与えています：
 ## 💻 使用技術
 * **Python**
 * **Streamlit（UI）**(https://streamlit.io/)
-* **Ollama（ローカルLLM）**(https://ollama.com/)
-* **ngrok（外部公開）**(https://ngrok.com/)
-* **requests（API通信）**
+* **gemini**(https://aistudio.google.com?utm_source=chatgpt.com)
 
 ---
 
@@ -134,7 +102,6 @@ AIには以下の制約を与えています：
 - ヒントレベル（Lv1〜Lv3）の導入
 - コード実行結果との連動
 - 学習履歴の保存機能
-- 複数モデル比較（llama3 / mistral / phi3）
 
 ---
 ## 🧠 このプロジェクトの特徴
