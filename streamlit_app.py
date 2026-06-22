@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-from streamlit_ace import st_ace
+from streamlit-ace import st_ace
 from ai_hint import get_hint
 
 import io
