@@ -41,7 +41,7 @@ if st.button("コードを実行"):
     st.code(result)
 # ヒントボタン
 with st.form("hint_form"):
-    submitted = st.form_submit_button("ヒントをもらう（一度だけ押してください）")
+    submitted = st.form_submit_button("ヒントをもらう（一度で一回だけ押してください）")
     if submitted:
         st.write(get_hint(problem, code))
 
