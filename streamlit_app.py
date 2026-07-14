@@ -2,15 +2,18 @@ import streamlit as st
 import time
 from streamlit_ace import st_ace
 from ai_hint import get_hint
+from supabase import create_client
 
 import io
 import contextlib
+
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 # =========================
 # セッション初期化
 # =========================
-
-if "history" not in st.session_state:
-    st.session_state.history = []
 
 if "current_hints" not in st.session_state:
     st.session_state.current_hints = []
@@ -34,6 +37,30 @@ def run_code(code):
 
     except Exception as e:
         return f"エラー:\n{e}"
+def save_history(problem, code, solve_time, hints):
+
+    supabase.table("learning_history").insert({
+
+        "problem": problem,
+        "code": code,
+        "solve_time": int(solve_time),
+        "hint_count": len(hints),
+        "hints": "\n".join(hints)
+
+    }).execute()
+
+def load_history():
+
+    res = (
+        supabase
+        .table("learning_history")
+        .select("*")
+        .order("created_at", desc=True)
+        .execute()
+    )
+
+    return res.data
+    
 st.sidebar.title("📚 メニュー")
 
 if st.sidebar.button("💻 学習画面"):
@@ -190,13 +217,12 @@ if st.button("問題を終了"):
 
         solve_time = time.time() - st.session_state.start_time
 
-        st.session_state.history.append(
-            {
-                "problem": problem,
-                "time": solve_time,
-                "hints": st.session_state.current_hints.copy()
-            }
-        )
+        save_history(
+        problem,
+        code,
+        solve_time,
+        st.session_state.current_hints
+        )    
 
         st.success("履歴に保存しました！")
 
