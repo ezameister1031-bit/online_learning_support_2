@@ -17,7 +17,12 @@ if "current_hints" not in st.session_state:
 
 if "start_time" not in st.session_state:
     st.session_state.start_time = None
-    
+if "mode" not in st.session_state:
+    st.session_state.mode = "study"
+
+if "selected_history" not in st.session_state:
+    st.session_state.selected_history = None
+
 def run_code(code):
     output = io.StringIO()
 
@@ -29,6 +34,79 @@ def run_code(code):
 
     except Exception as e:
         return f"エラー:\n{e}"
+st.sidebar.title("📚 メニュー")
+
+if st.sidebar.button("💻 学習画面"):
+    st.session_state.mode = "study"
+    st.rerun()
+
+if st.sidebar.button("📖 学習履歴"):
+    st.session_state.mode = "history"
+    st.rerun()
+
+if st.session_state.mode == "history":
+
+    st.title("📖 学習履歴")
+
+    history = load_history()
+
+    if not history:
+        st.info("まだ履歴がありません")
+        st.stop()
+
+    for i, h in enumerate(history, 1):
+
+        with st.expander(f"{i}. {h['created_at']}"):
+
+            st.write("### 問題")
+
+            st.write(h["problem"])
+
+            st.write(f"⏰ 解答時間：{int(h['solve_time'])} 秒")
+
+            st.write(f"💡 ヒント回数：{h['hint_count']} 回")
+
+            if st.button(
+                "詳細を見る",
+                key=h["id"]
+            ):
+
+                st.session_state.selected_history = h
+
+                st.session_state.mode = "history_detail"
+
+                st.rerun()
+
+    st.stop()
+if st.session_state.mode == "history_detail":
+
+    data = st.session_state.selected_history
+
+    st.title("📖 学習履歴")
+
+    st.subheader("問題")
+
+    st.code(data["problem"])
+
+    st.subheader("コード")
+
+    st.code(data["code"])
+
+    st.subheader("AIヒント")
+
+    st.write(data["hint"])
+
+    st.subheader("解答時間")
+
+    st.write(f"{int(data['solve_time'])} 秒")
+
+    if st.button("⬅ 履歴一覧へ戻る"):
+
+        st.session_state.mode = "history"
+
+        st.rerun()
+
+    st.stop()
 st.title("Python学習支援システム")
 
 # 問題入力
