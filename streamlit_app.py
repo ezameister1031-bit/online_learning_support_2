@@ -122,7 +122,7 @@ if st.session_state.mode == "history_detail":
 
     st.subheader("AIヒント")
 
-    st.write(data["hint"])
+    st.write(data["hints"])
 
     st.subheader("解答時間")
 
