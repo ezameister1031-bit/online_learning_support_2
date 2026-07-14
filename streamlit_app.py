@@ -5,7 +5,19 @@ from ai_hint import get_hint
 
 import io
 import contextlib
+# =========================
+# セッション初期化
+# =========================
 
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+if "current_hints" not in st.session_state:
+    st.session_state.current_hints = []
+
+if "start_time" not in st.session_state:
+    st.session_state.start_time = None
+    
 def run_code(code):
     output = io.StringIO()
 
@@ -24,7 +36,10 @@ problem = st.text_area(
     "問題文",
     height=200
 )
-
+# 問題を入力したら開始時間を記録
+if problem and st.session_state.start_time is None:
+    st.session_state.start_time = time.time()
+    
 st.write("コード")
 
 # コード入力
@@ -42,8 +57,14 @@ if st.button("コードを実行"):
 # ヒントボタン
 with st.form("hint_form"):
     submitted = st.form_submit_button("ヒントをもらう（一度で一回だけ押してください）")
+
     if submitted:
-        st.write(get_hint(problem, code))
+
+        hint = get_hint(problem, code)
+
+        st.session_state.current_hints.append(hint)
+
+        st.write(hint)
 
 # =========================
 # 停止時間の計測
@@ -62,7 +83,13 @@ if code != st.session_state.last_code:
 idle_time = time.time() - st.session_state.last_time
 
 st.write(f"停止時間: {int(idle_time)}秒")
+# =========================
+# 解答時間
+# =========================
 
+if st.session_state.start_time is not None:
+    solve_time = time.time() - st.session_state.start_time
+    st.write(f"解答時間: {int(solve_time)}秒")
 # =========================
 # 自動ヒント
 # =========================
@@ -74,3 +101,26 @@ if idle_time > IDLE_LIMIT:
 
     hint = get_hint(problem, code)
     st.info(hint)
+
+# =========================
+# 問題終了
+# =========================
+
+if st.button("問題を終了"):
+
+    if st.session_state.start_time is not None:
+
+        solve_time = time.time() - st.session_state.start_time
+
+        st.session_state.history.append(
+            {
+                "problem": problem,
+                "time": solve_time,
+                "hints": st.session_state.current_hints.copy()
+            }
+        )
+
+        st.success("履歴に保存しました！")
+
+        st.session_state.current_hints = []
+        st.session_state.start_time = None
