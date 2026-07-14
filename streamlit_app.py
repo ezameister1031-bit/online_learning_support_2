@@ -3,6 +3,7 @@ import time
 from streamlit_ace import st_ace
 from ai_hint import get_hint
 from supabase import create_client
+from datetime import datetime
 
 import io
 import contextlib
@@ -45,10 +46,10 @@ def save_history(problem, code, solve_time, hints):
         "code": code,
         "solve_time": int(solve_time),
         "hint_count": len(hints),
-        "hints": "\n".join(hints)
+        "hints": "\n".join(hints),
+        "created_at": datetime.now().isoformat()
 
     }).execute()
-
 def load_history():
 
     res = (
